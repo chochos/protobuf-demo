@@ -1,2 +1,2 @@
 # protobuf-demo
-Protocol buffers demo, and benchmark against SQL
+Protocol buffers demo, and benchmark against SOAP
