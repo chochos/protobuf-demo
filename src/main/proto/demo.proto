@@ -1,0 +1,24 @@
+syntax = "proto3";
+package protos.wrapper;
+
+option java_package="org.javamexico.protobuf.example";
+option java_outer_classname="Protos";
+
+message Peticion {
+    int32 id = 1;
+    string user = 2;
+    string password = 3;
+    string product = 4;
+    float amount = 5;
+    string account = 6;
+    int64 date = 7;
+}
+
+message Respuesta {
+    int32 id = 1;
+    int32 rcode = 2;
+    oneof resultado {
+        string error = 3;
+        int32 confirmacion = 4;
+    }
+}

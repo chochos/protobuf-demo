@@ -1,0 +1,59 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.1'
+    }
+}
+
+apply plugin: 'application'
+apply plugin:'com.google.protobuf'
+apply plugin:'idea'
+apply plugin:'eclipse'
+version=0.1
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile "io.netty:netty-all:4.1.9.Final",
+        'org.slf4j:slf4j-api:1.7.23',
+        'org.projectlombok:lombok:1.16.12',
+        'com.h2database:h2:1.4.193',
+        'org.apache.commons:commons-dbcp2:2.1.1',
+        'org.apache.commons:commons-pool2:2.4.2',
+        'org.springframework:spring-jdbc:4.3.6.RELEASE',
+        "io.dropwizard.metrics:metrics-core:3.2.2",
+        'com.google.protobuf:protobuf-java:3.2.0'
+    runtime 'org.slf4j:slf4j-simple:1.7.23'
+}
+
+mainClassName='org.javamexico.protobuf.example.Main'
+
+protobuf {
+    protoc {
+        artifact = 'com.google.protobuf:protoc:3.2.0'
+    }
+    generatedFilesBaseDir = "$projectDir/gensrc"
+}
+
+eclipse {
+    classpath {
+        file.whenMerged { cp ->
+            cp.entries.add( new org.gradle.plugins.ide.eclipse.model.SourceFolder("${protobuf.generatedFilesBaseDir}/main/java/", null) )
+        }
+    }
+}
+
+idea {
+    module {
+        sourceDirs += file("${protobuf.generatedFilesBaseDir}/main/java/")
+        sourceDirs += file("${protobuf.generatedFilesBaseDir}/main/java/")
+    }
+}
+
+tasks.withType(JavaExec) {
+    systemProperties System.properties
+}
