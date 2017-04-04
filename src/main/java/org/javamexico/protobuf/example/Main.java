@@ -7,6 +7,8 @@ import org.javamexico.ws.example.ClienteWS;
 import org.javamexico.ws.example.WebService;
 
 import javax.xml.ws.Endpoint;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -20,6 +22,16 @@ public class Main {
     private final static Servicio servicio = new Servicio();
     public static final MetricRegistry METRICS = new MetricRegistry();
     public static final int ROUNDS = 50000;
+
+    private static void externalTest() throws Exception {
+        ProtoServer server = new ProtoServer(servicio);
+        Thread t = new Thread(server, "proto-server");
+        t.start();
+        System.out.println("LISTO; dale ENTER para terminar");
+        synchronized(servicio) {
+            servicio.wait();
+        }
+    }
 
     private static void proto() throws Exception {
         ProtoServer server = new ProtoServer(servicio);
@@ -46,11 +58,12 @@ public class Main {
     }
 
     public static void main(String... args) throws Exception {
-        proto();
         ws();
+        proto();
         ConsoleReporter.forRegistry(Main.METRICS).convertDurationsTo(TimeUnit.MILLISECONDS)
                 .convertRatesTo(TimeUnit.SECONDS).outputTo(System.out).build().report();
         System.out.println("FYI, " + Runtime.getRuntime().availableProcessors() + " CPUs");
+        externalTest();
         System.exit(0);
     }
 
